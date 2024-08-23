@@ -18,6 +18,14 @@ public class GetUserLogin : MonoBehaviour
     [SerializeField] public string game_id;
 
     [System.Serializable]
+    public class Response
+    {
+        public int code;
+        public bool success;
+        public UserData data;
+    }
+
+    [System.Serializable]
     public class UserData
     {
         public string id;
@@ -49,8 +57,14 @@ public class GetUserLogin : MonoBehaviour
         form.AddField("game_id", game_id);
 
         // UnityWebRequest www = UnityWebRequest.Post("http://localhost/irgl-api-test/getUserDataByGamePass.php", form);
-        UnityWebRequest www = UnityWebRequest.Post("https://irgl.petra.ac.id/irgl2024/elim/api/getUserDataByGamePass.php", form);
+        // UnityWebRequest www = UnityWebRequest.Post("https://irgl.petra.ac.id/irgl2024/elim/api/getUserDataByGamePass.php", form);
+        UnityWebRequest www = UnityWebRequest.Post("https://irgl.petra.ac.id/api/getUserDataByGamePass", form);
         www.timeout = 10; // Timeout in seconds
+
+        // Token
+        GlobalTeamData.token = CookieManagement.GetBrowserCookie("token");
+        www.SetRequestHeader("Authorization", "Bearer " + GlobalTeamData.token);
+
         yield return www.SendWebRequest();
 
         // Error handling
@@ -59,7 +73,7 @@ public class GetUserLogin : MonoBehaviour
         {
             Debug.LogError(www.error);
 
-            if (www.responseCode == 400 || www.responseCode == 403 || www.responseCode == 405)
+            if (www.responseCode == 400 || www.responseCode == 422 || www.responseCode == 403)
             {
                 // Show response
                 loginSceneUIManager.PlayLoadingAnimation(false);
@@ -109,14 +123,14 @@ public class GetUserLogin : MonoBehaviour
             }
 
             Debug.Log("Form upload complete!");
-            // Debug.Log(www.downloadHandler.text);
+            Debug.Log(www.downloadHandler.text);
 
             // Deserialize JSON into UserData object
-            UserData userData = JsonUtility.FromJson<UserData>(www.downloadHandler.text);
+            Response userData = JsonUtility.FromJson<Response>(www.downloadHandler.text);
 
             // Access the fields
-            string id = userData.id;
-            string usernameFromDB = userData.username;
+            string id = userData.data.id;
+            string usernameFromDB = userData.data.username;
 
             Debug.Log(id);
             Debug.Log(usernameFromDB);
@@ -134,7 +148,7 @@ public class GetUserLogin : MonoBehaviour
             loginSceneUIManager.PlayAnimationThenChangeScene();
 
             // Update Global data
-            GlobalTeamData.teamId = int.Parse(id);
+            GlobalTeamData.teamId = id;
             GlobalTeamData.teamName = usernameFromDB;
             GlobalTeamData.teamGamePass = username;
 

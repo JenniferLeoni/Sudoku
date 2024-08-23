@@ -49,10 +49,10 @@ public class LoadingTextSubmitScene : MonoBehaviour
         switch (responseCode)
         {
             // TODO: Sesuaikan Text
-            case 201:
+            case 200:
                 loadingText.text = "Score successfully uploaded ";
                 break;
-            case 400:
+            case 422:
                 loadingText.text = "Missing parameter";
                 break;
             case 405:
@@ -69,7 +69,7 @@ public class LoadingTextSubmitScene : MonoBehaviour
                 break;
         }
 
-        if (responseCode != 201)
+        if (responseCode != 200)
         {
             textFadeOutCoroutine = TextFadeOut();
             StartCoroutine(textFadeOutCoroutine);   

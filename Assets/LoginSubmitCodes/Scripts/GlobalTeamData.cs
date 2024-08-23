@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class GlobalTeamData : MonoBehaviour
 {
-    public static int teamId;
+    public static string teamId;
     public static string teamName;
     public static string teamGamePass;
+    public static string token;
 }

@@ -52,7 +52,7 @@ public class LoadingTextLoginScene : MonoBehaviour
             case 200:
                 loadingText.text = "Welcome, " + teamname;
                 break;
-            case 404:
+            case 403:
                 loadingText.text = "Wrong teamname or password";
                 break;
             case 400:
@@ -61,7 +61,7 @@ public class LoadingTextLoginScene : MonoBehaviour
             case 405:
                 loadingText.text = "Wrong Method";
                 break;
-            case 403:
+            case 422:
                 loadingText.text = "ID Error, please go back to Roulette";
                 loginSceneUIManager.SetVerificationToFailed();
                 break;
@@ -75,7 +75,7 @@ public class LoadingTextLoginScene : MonoBehaviour
 
         if (responseCode != 200)
         {
-            if (responseCode != 403)
+            if (responseCode != 422)
             {
                 textFadeOutCoroutine = TextFadeOut();
                 StartCoroutine(textFadeOutCoroutine);

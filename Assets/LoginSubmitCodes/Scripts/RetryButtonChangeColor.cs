@@ -20,7 +20,7 @@ public class RetryButtonChangeColor : MonoBehaviour, IPointerEnterHandler, IPoin
         // retryButtonImage.sprite = buttonBGSprites[0];
         // // submitText.color = new Color32(0x05, 0xFD, 0x47, 0xFF); // Equivalent to 05FD47
         // retryText.color = new Color32(0x00, 0xB7, 0xFA, 0xFF); // Equivalent to 00B7FA
-        // ChangeButtonToHovered();
+        ChangeButtonToHovered();
     }
 
     public void OnPointerEnter(PointerEventData eventData)

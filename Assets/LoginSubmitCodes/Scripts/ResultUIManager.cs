@@ -144,7 +144,9 @@ public class ResultUIManager : MonoBehaviour
 
     public void ChangeLoadingText(long responseCode)
     {
-        retrySubmitScoreButton.interactable = true;
+        if (responseCode != 200) {
+            retrySubmitScoreButton.interactable = true;
+        }
         PlayReceiveRespondSFX();
         loadingTextSubmitScene.ChangeTextThenFadeOut(responseCode);
     }

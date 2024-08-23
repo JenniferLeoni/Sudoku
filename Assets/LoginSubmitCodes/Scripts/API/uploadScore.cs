@@ -15,16 +15,24 @@ public class uploadScore : MonoBehaviour
     private string team_id;
 
     [System.Serializable]
+    public class Response
+    {
+        public int code;
+        public bool success;
+        public UserData data;
+    }
+
+    [System.Serializable]
     public class UserData
     {
-        public string game_id;
         public string team_id;
+        public string game_id;        
         public string score;
     }
 
     public void UploadScore(string num, bool fun)
     {
-        team_id = GlobalTeamData.teamId.ToString();
+        team_id = GlobalTeamData.teamId;
         score = num;
         StartCoroutine(Upload(0, 3, fun));
     }
@@ -45,11 +53,17 @@ public class uploadScore : MonoBehaviour
         //     www = UnityWebRequest.Post("http://localhost/irgl-api-test/insertScoreLose.php", form);
         // }
         if (fun) {
-            www = UnityWebRequest.Post("https://irgl.petra.ac.id/irgl2024/elim/api/insertScoreWin.php", form);
+            // www = UnityWebRequest.Post("https://irgl.petra.ac.id/irgl2024/elim/api/insertScoreWin.php", form);
+            www = UnityWebRequest.Post("https://irgl.petra.ac.id/api/uploadScoreWin", form);
         } else {
-            www = UnityWebRequest.Post("https://irgl.petra.ac.id/irgl2024/elim/api/insertScoreLose.php", form);
+            // www = UnityWebRequest.Post("https://irgl.petra.ac.id/irgl2024/elim/api/insertScoreLose.php", form);
+            www = UnityWebRequest.Post("https://irgl.petra.ac.id/api/uploadScoreLose", form);
         }
         www.timeout = 10; // Timeout in seconds
+
+        // Token
+        www.SetRequestHeader("Authorization", "Bearer " + GlobalTeamData.token);
+
         yield return www.SendWebRequest();
         
 
@@ -59,7 +73,7 @@ public class uploadScore : MonoBehaviour
         {
             Debug.LogError(www.error);
 
-            if (www.responseCode == 400 || www.responseCode == 405 || www.responseCode == 500)
+            if (www.responseCode == 422 || www.responseCode == 405 || www.responseCode == 500)
             {
                 // TODO: Show response tapi yang ada response error
                 // Show response
@@ -115,12 +129,12 @@ public class uploadScore : MonoBehaviour
             Debug.Log("Form upload complete!");
 
             // Deserialize JSON into UserData object
-            UserData userData = JsonUtility.FromJson<UserData>(www.downloadHandler.text);
+            Response userData = JsonUtility.FromJson<Response>(www.downloadHandler.text);
 
             // Access the fields
-            string game_id = userData.game_id;
-            string team_id = userData.team_id;
-            string score = userData.score;
+            string game_id = userData.data.game_id;
+            string team_id = userData.data.team_id;
+            string score = userData.data.score;
 
             Debug.Log(game_id);
             Debug.Log(team_id);
